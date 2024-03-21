@@ -4,7 +4,7 @@ using Proyecto_BeerStore.Models;
 
 namespace Proyecto_BeerStore.Services;
 
-public class BeerService : IBeerService
+public class BeerService : ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>
 {
     private readonly StoreContext _context;
 

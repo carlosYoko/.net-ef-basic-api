@@ -8,7 +8,7 @@ using Proyecto_BeerStore.Validators;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<IBeerService, BeerService>();
+builder.Services.AddKeyedScoped<ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>, BeerService>("beerService");
 // Entity framework
 builder.Services.AddDbContext<StoreContext>(options =>
 {
