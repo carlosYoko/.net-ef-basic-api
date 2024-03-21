@@ -5,8 +5,8 @@ namespace Proyecto_BeerStore.Services;
 public interface IBeerService
 {
     Task<IEnumerable<BeerDto>> Get();
-    Task<BeerDto> GetById();
+    Task<BeerDto?> GetById(int id);
     Task<BeerDto> Add(BeerInsertDto beerInsertDto);
-    Task<BeerDto> Update(BeerUpdateDto beerUpdateDto);
-    Task<BeerDto> Delete(int id);
+    Task<BeerDto?> Update(int id, BeerUpdateDto beerUpdateDto);
+    Task<BeerDto?> Delete(int id);
 }
