@@ -119,7 +119,7 @@ namespace Proyecto_BeerStore.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult<BeerDto>> Delete(int id)
         {
             var beer = await _context.Beers.FindAsync(id);
             if (beer == null)
@@ -130,7 +130,16 @@ namespace Proyecto_BeerStore.Controllers
             _context.Beers.Remove(beer);
             await _context.SaveChangesAsync();
             
-            return NoContent();
+            var beerDto = new BeerDto()
+            {
+                Id = beer.BeerId,
+                Name = beer.Name,
+                Alcohol = beer.Alcohol,
+                BrandId = beer.BrandId
+            };
+            
+            return Ok(beerDto);
+
         }
     }
 }
