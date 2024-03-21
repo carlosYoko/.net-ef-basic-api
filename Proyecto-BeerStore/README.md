@@ -1,3 +1,3 @@
 # Basic API Entity Framework
 
-Ejemplo de configuración básica para una api .NET 8 con EF Core.
+Ejemplo refactorizado de configuration básica para una API .NET 8 con EF Core.
