@@ -11,7 +11,7 @@ public class BeerRepository : IRepository<Beer>
     {
         _context = context;
     }
-    
+
     public async Task<IEnumerable<Beer>> Get()
     {
         return await _context.Beers.ToListAsync();
@@ -24,13 +24,13 @@ public class BeerRepository : IRepository<Beer>
 
     public async Task Add(Beer beer)
     {
-         await _context.Beers.AddAsync(beer);
+        await _context.Beers.AddAsync(beer);
     }
 
     public void Update(Beer beer)
     {
         _context.Beers.Attach(beer);
-        _context.Beers.Entry(beer).State = EntityState.Modified;    
+        _context.Beers.Entry(beer).State = EntityState.Modified;
     }
 
     public void Delete(Beer beer)
@@ -41,5 +41,10 @@ public class BeerRepository : IRepository<Beer>
     public async Task Save()
     {
         await _context.SaveChangesAsync();
+    }
+
+    public IEnumerable<Beer> Search(Func<Beer, bool> filter)
+    {
+        return _context.Beers.Where(filter).ToList();
     }
 }

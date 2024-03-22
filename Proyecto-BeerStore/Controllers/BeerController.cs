@@ -16,7 +16,7 @@ namespace Proyecto_BeerStore.Controllers
         public BeerController(
             IValidator<BeerInsertDto> beerInsertValidator,
             IValidator<BeerUpdateDto> beerUpdateValidator,
-           [FromKeyedServices("beerService")] ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto> beerService)
+            [FromKeyedServices("beerService")] ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto> beerService)
         {
             _beerInsertValidator = beerInsertValidator;
             _beerUpdateValidator = beerUpdateValidator;
@@ -26,7 +26,7 @@ namespace Proyecto_BeerStore.Controllers
         [HttpGet]
         public async Task<IEnumerable<BeerDto>> Get()
         {
-          return await  _beerService.Get();
+            return await _beerService.Get();
         }
 
         [HttpGet("{id}")]
@@ -46,8 +46,13 @@ namespace Proyecto_BeerStore.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
+            if (!_beerService.Validate(beerInsertDto))
+            {
+                return BadRequest(_beerService.Errors);
+            }
+
             var beerDto = await _beerService.Add(beerInsertDto);
-            
+
             return CreatedAtAction(nameof(GetById), new { id = beerDto.Id }, beerDto);
         }
 
@@ -59,8 +64,14 @@ namespace Proyecto_BeerStore.Controllers
             {
                 return BadRequest(validationResult.Errors);
             }
-            var beerDto = await  _beerService.Update(id, beerUpdateDto);
-            
+
+            if (!_beerService.Validate(beerUpdateDto))
+            {
+                return BadRequest(_beerService.Errors);
+            }
+
+            var beerDto = await _beerService.Update(id, beerUpdateDto);
+
             return beerDto == null ? NotFound() : Ok(beerDto);
         }
 
