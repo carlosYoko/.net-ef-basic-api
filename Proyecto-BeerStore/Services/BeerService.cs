@@ -1,33 +1,34 @@
-using Microsoft.EntityFrameworkCore;
 using Proyecto_BeerStore.DTOs;
 using Proyecto_BeerStore.Models;
+using Proyecto_BeerStore.Repository;
 
 namespace Proyecto_BeerStore.Services;
 
 public class BeerService : ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>
 {
-    private readonly StoreContext _context;
+    private readonly IRepository<Beer> _beerRepository;
 
-    public BeerService(StoreContext context)
+    public BeerService(IRepository<Beer> beerRepository)
     {
-        _context = context;
+        _beerRepository = beerRepository;
     }
-    
     
     public async Task<IEnumerable<BeerDto>> Get()
     {
-        return await _context.Beers.Select(b => new BeerDto()
+        var beers = await _beerRepository.Get();
+
+        return beers.Select(b => new BeerDto()
         {
             Id = b.BeerId,
             Name = b.Name,
-            BrandId = b.BrandId,
-            Alcohol = b.Alcohol
-        }).ToListAsync();
+            Alcohol = b.Alcohol,
+            BrandId = b.BrandId
+        });
     }
 
     public async Task<BeerDto?> GetById(int id)
     {
-        var beer = await _context.Beers.FindAsync(id);
+        var beer = await _beerRepository.GetById(id);
 
         if (beer != null)
         {
@@ -53,8 +54,8 @@ public class BeerService : ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>
             Alcohol = beerInsertDto.Alcohol
         };
 
-        await _context.Beers.AddAsync(beer);
-        await _context.SaveChangesAsync();
+        await _beerRepository.Add(beer);
+        await _beerRepository.Save();
         
         var beerDto = new BeerDto()
         {
@@ -69,7 +70,7 @@ public class BeerService : ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>
 
     public async Task<BeerDto?> Update(int id, BeerUpdateDto beerUpdateDto)
     {
-        var beer = await _context.Beers.FindAsync(id);
+        var beer = await _beerRepository.GetById(id);
         if (beer != null)
         {
             beer.BeerId = beerUpdateDto.Id;
@@ -77,7 +78,8 @@ public class BeerService : ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>
             beer.Alcohol = beerUpdateDto.Alcohol;
             beer.BrandId = beerUpdateDto.BrandId;
             
-            await _context.SaveChangesAsync();
+            _beerRepository.Update(beer);
+            await _beerRepository.Save();
             
             var beerDto = new BeerDto()
             {
@@ -93,7 +95,7 @@ public class BeerService : ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>
 
     public async Task<BeerDto?> Delete(int id)
     {
-        var beer = await _context.Beers.FindAsync(id);
+        var beer = await _beerRepository.GetById(id);
         if (beer != null)
         {
             var beerDto = new BeerDto()
@@ -104,8 +106,8 @@ public class BeerService : ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>
                 BrandId = beer.BrandId
             };
             
-            _context.Remove(beer);
-            await _context.SaveChangesAsync();
+            _beerRepository.Delete(beer);
+            await _beerRepository.Save();
             
             return beerDto;
         }

@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Proyecto_BeerStore.DTOs;
 using Proyecto_BeerStore.Models;
+using Proyecto_BeerStore.Repository;
 using Proyecto_BeerStore.Services;
 using Proyecto_BeerStore.Validators;
 
@@ -9,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddKeyedScoped<ICommonService<BeerDto, BeerInsertDto, BeerUpdateDto>, BeerService>("beerService");
+
+// Repository
+builder.Services.AddScoped<IRepository<Beer>, BeerRepository>();
+
 // Entity framework
 builder.Services.AddDbContext<StoreContext>(options =>
 {
